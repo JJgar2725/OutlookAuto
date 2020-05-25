@@ -1,28 +1,55 @@
+# imported modules
 import sys
 import os
-from selenium import webdriver
+import time
 from dotenv import load_dotenv
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
+# loads in dotenv variables
 load_dotenv()
 
+# creates a new Chrome window and maximizes
 driver = webdriver.Chrome()
+driver.maximize_window()
+
+# goes to my.utrgv.edu
 driver.get("https://my.utrgv.edu/web/myutrgv/home")
 
+# finds text input and inputs username
 username = driver.find_element_by_id("_58_username")
 username.send_keys(os.environ['USER-NAME'])
 
+# finds text input and inputs password
 password = driver.find_element_by_id("_58_password")
 password.send_keys(os.environ['PASSWORD'])
 
+# finds submit button and hits it
 submit_button = driver.find_element_by_xpath(
     '//*[@id="_58_fm"]/div/button').click()
 
-driver.implicitly_wait(10)  # FIXME: USE EXPLICIT WAITING
-outlook_select = driver.find_element_by_xpath(
-    '//*[@id="portlet_utrgvgraphemailportlet_WAR_utrgvgraphemailportlet"]/div/div/div/div/article[1]/a').click()
+# explicitly waits for page to load in and opens outlook
+wait = WebDriverWait(driver, 10)
+outlook_select = wait.until(EC.element_to_be_clickable(
+    (By.XPATH, '//*[@id="portlet_utrgvgraphemailportlet_WAR_utrgvgraphemailportlet"]/div/div/div/div/article[1]/a'))).click()
 
-driver.implicitly_wait(20)  # FIXME: USE EXPLICIT WAITING
-new_message = driver.find_element_by_xpath(
-    '//*[@id="app"]/div/div[2]/div[1]/div/div[1]/div[1]/div[2]/button').click()
+# explicitly waits for new window
+waitAgain = WebDriverWait(driver, 10)
 
-testing = driver.get("https://google.com")
+# gets a list of windows currently open
+handles = driver.window_handles
+
+# verifies that second window is open and waits for load-in
+driver.switch_to.window(handles[1])
+driver.implicitly_wait(10)
+
+# finds New Message button, goes to it, and clicks it
+driver.find_element(By.ID, "id__3").click()
+element = driver.find_element(By.ID, "id__3")
+actions = ActionChains(driver)
+actions.move_to_element(element).perform()
+
+# user-defined info
