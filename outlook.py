@@ -18,8 +18,12 @@ driver = webdriver.Chrome()
 driver.maximize_window()
 
 # creates system variables for later usage
-email = str(sys.argv[1])
-subject = str(sys.argv[2])
+try:
+    email = str(sys.argv[1])
+    subject = str(sys.argv[2])
+except IndexError:
+    email = input('Email: ')
+    subject = input('Subject: ')
 
 # goes to my.utrgv.edu
 driver.get("https://my.utrgv.edu/web/myutrgv/home")
@@ -39,7 +43,8 @@ submit_button = driver.find_element_by_xpath(
 # explicitly waits for page to load in and opens outlook
 wait = WebDriverWait(driver, 10)
 outlook_select = wait.until(EC.element_to_be_clickable(
-    (By.XPATH, '//*[@id="portlet_utrgvgraphemailportlet_WAR_utrgvgraphemailportlet"]/div/div/div/div/article[1]/a'))).click()
+    (By.XPATH,
+     '//*[@id="portlet_utrgvgraphemailportlet_WAR_utrgvgraphemailportlet"]/div/div/div/div/article[1]/a'))).click()
 
 # explicitly waits for new window
 waitAgain = WebDriverWait(driver, 10)
