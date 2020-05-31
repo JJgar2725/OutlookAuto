@@ -1,4 +1,4 @@
 .env
 .idea
-chromedriver.exe
 .vscode
+debug.log
